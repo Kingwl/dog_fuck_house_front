@@ -31,13 +31,6 @@ export default class MapComponent extends Component {
         this._rangePoints = val;
     }
 
-    static propTypes: {
-        x: React.PropTypes.number,
-        y: React.PropTypes.number,
-        time: React.PropTypes.number,
-        policy: React.PropTypes.string
-    }
-
     addCenterMarker(x, y) {
         if (this.centerMarker) {
             this.centerMarker.setMap(null);
@@ -80,6 +73,27 @@ export default class MapComponent extends Component {
         }, { policy });
     }
 
+    createHouseMarker() {
+        const {houses = []} = this.props;
+        let geocoder = new AMap.Geocoder({
+            city: "010",
+            radius: 1000
+        });
+        houses.forEach(house => {
+            let arr = house.place.split();
+            geocoder.getLocation(`${arr[0]} ${arr[1]}`, (status, result) => {
+                if (status === 'complete' && result.info === 'OK') {
+                    let geocode = result.geocodes[0];
+                    
+                    rentMarker = new AMap.Marker({
+                        map: this.map,
+                        position: [geocode.location.getLng(), geocode.location.getLat()]
+                    });
+                }
+            });
+        })
+    }
+
     componentDidMount() {
         const {x, y} = this.props;
         this.map = new AMap.Map("container", {
@@ -96,8 +110,30 @@ export default class MapComponent extends Component {
         const {x, y, time, policy} = this.props;
 
         this.findRange();
+        this.createHouseMarker();
+
         return (
             <div className="map" id="container"></div>
         );
     }
+}
+
+MapComponent.propTypes = {
+    x: React.PropTypes.number,
+    y: React.PropTypes.number,
+    time: React.PropTypes.number,
+    policy: React.PropTypes.string,
+    houses: React.PropTypes.arrayOf(React.PropTypes.shape({
+        sale: React.PropTypes.string,
+        url: React.PropTypes.string,
+        place: React.PropTypes.string,
+        type: React.PropTypes.string,
+        size: React.PropTypes.string,
+        floor: React.PropTypes.string,
+        short_rent: React.PropTypes.bool,
+        dist: React.PropTypes.string,
+        specs: React.PropTypes.arrayOf(React.PropTypes.string),
+        money: React.PropTypes.string,
+        month: React.PropTypes.string
+    }))
 }

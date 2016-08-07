@@ -1,4 +1,7 @@
 import React from 'react';
+import {Spin } from 'antd';
+import Request from 'superagent';
+
 import Map from './mapComponent';
 import Sidebar from './sidebarComponent';
 
@@ -10,7 +13,21 @@ export default class IndexComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selectedPlace: {}, x: 116.39742, y: 39.90923, time: 30, policy: 'SUBWAY,BUS' };
+    this.state = { loading: false, houseList: [], selectedPlace: {}, x: 116.39742, y: 39.90923, time: 30, policy: 'SUBWAY,BUS' };
+  }
+
+  componentDidMount() {
+    this.setState({ loading: true });
+    Request.get('http://localhost:4567/')
+      .end((err, data) => {
+        this.setState({ loading: false });
+        if (!err && data) {
+          let json = JSON.parse(data.text);
+          this.setState({ houseList: json.data });
+        } else {
+          console.log('no');
+        }
+      });
   }
 
   placeSelected(x) {
@@ -32,15 +49,17 @@ export default class IndexComponent extends Component {
   }
 
   render() {
-    let {x, y, time, policy} = this.state;
+    let {loading, x, y, time, policy, houseList} = this.state;
 
     return (
       <div className="index">
-        <Map x={x} y={y} time={this.clamp(1, 60, time) } policy={policy}/>
-        <Sidebar
-          onTimeChanged={x => this.timeChanged(x) }
-          onPolicyChanged={x => this.policyChanged(x) }
-          onPlaceSelected={x => this.placeSelected(x) } />
+        <Map x={x} y={y} time={this.clamp(1, 60, time) } policy={policy} houses={houseList}/>
+        <Spin spinning={loading} tip="正在读取数据...">
+          <Sidebar
+            onTimeChanged={x => this.timeChanged(x) }
+            onPolicyChanged={x => this.policyChanged(x) }
+            onPlaceSelected={x => this.placeSelected(x) } />
+        </Spin>
       </div>
     );
   }
