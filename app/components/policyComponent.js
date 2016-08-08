@@ -20,7 +20,7 @@ export default class PolicyComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { time: 30, policy: null }
+        this.state = { time: 30, policy: 3 }
     }
 
     static propTypes: {
@@ -43,7 +43,19 @@ export default class PolicyComponent extends Component {
         this.setState({ policy: value });
 
         if (typeof onPolicyChanged === 'function') {
-            onPolicyChanged(value);
+            let res = 0;
+            switch (value) {
+                case 1:
+                    res = 'BUS';
+                    break;
+                case 2:
+                    res = 'SUBWAY';
+                    break;
+                case 3:
+                    res = 'SUBWAY,BUS';
+                    break;
+            }
+            onPolicyChanged(res);
         }
     }
 
@@ -58,9 +70,9 @@ export default class PolicyComponent extends Component {
                 </div>
                 <div className="policyType">
                     <RadioGroup onChange={e => this.policyChanged(e) } value={policy}>
-                        <Radio key={1} value="BUS"> 公交 </Radio>
-                        <Radio key={2} value="SUBWAY"> 地铁 </Radio>
-                        <Radio  key={3} value="SUBWAY,BUS"> 公交 + 地铁 </Radio>
+                        <Radio key={1} value={1}> 公交 </Radio>
+                        <Radio key={2} value={2}> 地铁 </Radio>
+                        <Radio  key={3} value={3}> 公交 + 地铁 </Radio>
                     </RadioGroup>
                 </div>
             </div>

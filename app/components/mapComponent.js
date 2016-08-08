@@ -75,21 +75,10 @@ export default class MapComponent extends Component {
 
     createHouseMarker() {
         const {houses = []} = this.props;
-        let geocoder = new AMap.Geocoder({
-            city: "010",
-            radius: 1000
-        });
         houses.forEach(house => {
-            let arr = house.place.split();
-            geocoder.getLocation(`${arr[0]} ${arr[1]}`, (status, result) => {
-                if (status === 'complete' && result.info === 'OK') {
-                    let geocode = result.geocodes[0];
-                    
-                    rentMarker = new AMap.Marker({
-                        map: this.map,
-                        position: [geocode.location.getLng(), geocode.location.getLat()]
-                    });
-                }
+            let rentMarker = new AMap.Marker({
+                map: this.map,
+                position: [house.lon, house.lat]
             });
         })
     }
@@ -108,10 +97,8 @@ export default class MapComponent extends Component {
 
     render() {
         const {x, y, time, policy} = this.props;
-
         this.findRange();
-        this.createHouseMarker();
-
+        //this.createHouseMarker(); // TODO add redux
         return (
             <div className="map" id="container"></div>
         );
@@ -119,6 +106,7 @@ export default class MapComponent extends Component {
 }
 
 MapComponent.propTypes = {
+    reloadEvent: React.PropTypes.any,
     x: React.PropTypes.number,
     y: React.PropTypes.number,
     time: React.PropTypes.number,
@@ -134,6 +122,8 @@ MapComponent.propTypes = {
         dist: React.PropTypes.string,
         specs: React.PropTypes.arrayOf(React.PropTypes.string),
         money: React.PropTypes.string,
-        month: React.PropTypes.string
+        month: React.PropTypes.string,
+        lon: React.PropTypes.Number,
+        lat: React.PropTypes.Number
     }))
 }

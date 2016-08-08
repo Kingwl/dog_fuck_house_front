@@ -31,7 +31,7 @@ export default class IndexComponent extends Component {
   }
 
   placeSelected(x) {
-    this.setState({ x: x.location.B, y: x.location.I });
+    this.setState({ x: x.location.getLng(), y: x.location.getLat() });
   }
 
   timeChanged(x) {

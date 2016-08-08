@@ -39,7 +39,7 @@ export default class SearchComponent extends Component {
 
             this.timeOutVal = setTimeout(() => {
                 var autoOptions = {
-                    city: "010" //城市，默认全国
+                    city: "010"
                 };
                 var autocomplete = new AMap.Autocomplete(autoOptions);
                 autocomplete.search(value, (status, result) => {
