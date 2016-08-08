@@ -75,7 +75,7 @@ export default class MapComponent extends Component {
 
     createHouseMarker() {
         const {houses = []} = this.props;
-        houses.forEach(house => {
+        houses.slice(0, 30).forEach(house => {
             let rentMarker = new AMap.Marker({
                 map: this.map,
                 position: [house.lon, house.lat]
@@ -97,8 +97,9 @@ export default class MapComponent extends Component {
 
     render() {
         const {x, y, time, policy} = this.props;
+        this.createHouseMarker();
         this.findRange();
-        //this.createHouseMarker(); // TODO add redux
+
         return (
             <div className="map" id="container"></div>
         );
